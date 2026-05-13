@@ -172,14 +172,14 @@
 <body class="font-rajdhani antialiased h-screen flex overflow-hidden">
 
     <!-- Mobile Header -->
-    <div class="lg:hidden fixed top-0 w-full h-16 glass-panel z-[60] flex items-center justify-between px-4 border-b border-gray-800">
+    <header class="lg:hidden fixed top-0 w-full h-16 glass-panel z-[60] flex items-center justify-between px-6 border-b border-gray-800">
         <div class="text-2xl font-orbitron font-bold tracking-wider">
             <span class="text-robloxBlue">VanguardAI</span><span class="text-neonBlue">.tools</span>
         </div>
-        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2" aria-label="Toggle Menu" aria-expanded="false" aria-controls="sidebar">
             <i class="fas fa-bars text-2xl"></i>
         </button>
-    </div>
+    </header>
 
     <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden lg:hidden" aria-hidden="true"></div>
@@ -416,16 +416,37 @@
     </a>
 
     <script>
-        // Mobile Menu
+        // Mobile Menu toggle with state management
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
+        let isSidebarOpen = false;
         function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+            isSidebarOpen = !isSidebarOpen;
+            if (isSidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'true');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
         }
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
+
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
         overlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar on link click (mobile)
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) toggleSidebar();
+            });
+        });
 
         // Value Displays
         const yourTotalDisplay = document.getElementById('yourTotal');
