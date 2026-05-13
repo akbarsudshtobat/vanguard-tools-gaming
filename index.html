@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VanguardAI.tools - Futuristic Gaming Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: '#0a0a0f',
+                        panel: 'rgba(16, 16, 28, 0.7)',
+                        neonPurple: '#b026ff',
+                        neonBlue: '#00f0ff',
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3)',
+                        'neon-blue': '0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(176, 38, 255, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.15), transparent 25%);
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 35, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-glow-purple {
+            text-shadow: 0 0 8px rgba(176, 38, 255, 0.8);
+        }
+        
+        .text-glow-blue {
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+        }
+
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, #b026ff, #00f0ff);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .nav-item:hover::before, .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(90deg, rgba(176,38,255,0.1) 0%, transparent 100%);
+            color: #fff;
+        }
+
+        .stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(176, 38, 255, 0.3);
+            border-color: rgba(176, 38, 255, 0.5);
+        }
+
+        .stat-card-blue:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.3);
+            border-color: rgba(0, 240, 255, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #b026ff; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff; 
+        }
+    </style>
+</head>
+<body class="font-rajdhani antialiased h-screen flex overflow-hidden">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden fixed top-0 w-full h-16 glass-panel z-50 flex items-center justify-between px-4 border-b border-gray-800">
+        <div class="text-2xl font-orbitron font-bold tracking-wider">
+            <span class="text-neonPurple text-glow-purple">VanguardAI</span><span class="text-neonBlue text-glow-blue">.tools</span>
+        </div>
+        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="glass-panel w-64 h-full flex-shrink-0 flex flex-col fixed lg:static transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 top-0 left-0 pt-16 lg:pt-0" role="navigation" aria-label="Main navigation">
+        <div class="h-20 flex items-center justify-center border-b border-gray-800 hidden lg:flex">
+            <a href="index.html" class="text-3xl font-orbitron font-bold tracking-wider cursor-pointer hover:scale-105 transition-transform">
+                <span class="text-neonPurple text-glow-purple">VanguardAI</span><span class="text-neonBlue text-glow-blue">.tools</span>
+            </a>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 flex flex-col gap-2 px-4">
+            <div class="text-xs text-gray-500 uppercase tracking-widest mb-2 font-bold pl-2">Navigation</div>
+
+            <a href="index.html" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-home text-lg group-hover:text-neonBlue transition-colors"></i>
+                <span class="font-semibold text-lg">Home</span>
+            </a>
+
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-6 mb-2 font-bold pl-2">Game Tools</div>
+
+            <a href="mlbb.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-gamepad text-lg group-hover:text-neonPurple transition-colors"></i>
+                <span class="font-semibold text-lg">Mobile Legends</span>
+            </a>
+
+            <a href="valorant.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-crosshairs text-lg group-hover:text-red-400 transition-colors"></i>
+                <span class="font-semibold text-lg">Valorant Tools</span>
+            </a>
+
+            <a href="roblox.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-cubes text-lg group-hover:text-blue-400 transition-colors"></i>
+                <span class="font-semibold text-lg">Roblox Tools</span>
+            </a>
+        </nav>
+
+        <!-- Coming Soon Section -->
+        <div class="px-6 py-4 mb-2">
+            <div class="glass-panel rounded-xl p-3 border-dashed border-gray-700">
+                <div class="text-[10px] text-neonBlue font-bold uppercase tracking-wider mb-1">Coming Soon</div>
+                <div class="text-xs text-gray-500">Premium Features: Advanced AI Analytics & Pro Scouting.</div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-gray-800 mt-auto">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-neonPurple to-neonBlue p-[2px]">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Gamer" alt="User Avatar" class="w-full h-full rounded-full bg-dark">
+                </div>
+                <div>
+                    <div class="text-sm font-bold text-white">PlayerOne</div>
+                    <div class="text-xs text-neonBlue">Pro Member</div>
+                </div>
+                <button class="ml-auto text-gray-400 hover:text-white" aria-label="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto pt-16 lg:pt-0 relative">
+        <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+            
+            <!-- Header -->
+            <header class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-4xl font-orbitron font-bold text-white mb-1"><span class="text-transparent bg-clip-text bg-gradient-to-r from-neonPurple to-neonBlue">Dashboard</span> Overview</h1>
+                    <p class="text-gray-400 text-lg">Welcome back, Commander. Your stats are looking sharp.</p>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" placeholder="Search tools, games..." class="glass-panel pl-10 pr-4 py-2 rounded-full text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neonPurple w-full md:w-64 transition-all">
+                    </div>
+                    <button class="glass-panel p-2.5 rounded-full text-gray-300 hover:text-white hover:shadow-neon-blue transition-all relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neonPurple rounded-full shadow-[0_0_5px_#b026ff]"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+                <!-- Stat 1 -->
+                <div class="glass-panel rounded-2xl p-6 stat-card border border-transparent">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Win Rate</div>
+                            <div class="text-3xl font-orbitron font-bold text-white">68.4%</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-neonPurple bg-opacity-20 flex items-center justify-center text-neonPurple shadow-[0_0_15px_rgba(176,38,255,0.2)]">
+                            <i class="fas fa-trophy text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="text-sm text-green-400 flex items-center gap-1 font-semibold">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+2.4% this week</span>
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="glass-panel rounded-2xl p-6 stat-card stat-card-blue border border-transparent">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Total Matches</div>
+                            <div class="text-3xl font-orbitron font-bold text-white">1,204</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-neonBlue bg-opacity-20 flex items-center justify-center text-neonBlue shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+                            <i class="fas fa-gamepad text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="text-sm text-green-400 flex items-center gap-1 font-semibold">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+42 this week</span>
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="glass-panel rounded-2xl p-6 stat-card border border-transparent">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">K/D Ratio</div>
+                            <div class="text-3xl font-orbitron font-bold text-white">2.14</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-red-500 bg-opacity-20 flex items-center justify-center text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                            <i class="fas fa-crosshairs text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400 flex items-center gap-1 font-semibold">
+                        <i class="fas fa-minus"></i>
+                        <span>Stable</span>
+                    </div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="glass-panel rounded-2xl p-6 stat-card stat-card-blue border border-transparent">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Credits</div>
+                            <div class="text-3xl font-orbitron font-bold text-white">8,450</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-yellow-400 bg-opacity-20 flex items-center justify-center text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+                            <i class="fas fa-coins text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="text-sm text-red-400 flex items-center gap-1 font-semibold">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-150 today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Tools Section -->
+            <h2 class="text-2xl font-orbitron font-bold text-white mb-6 border-l-4 border-neonPurple pl-3">Quick Access Tools</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                
+                <!-- MLBB Tool -->
+                <a href="mlbb.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-neonPurple transition-all duration-300 block">
+                    <div class="h-32 bg-gradient-to-r from-indigo-900 to-purple-900 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black opacity-40"></div>
+                        <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="absolute inset-0 p-6 flex flex-col justify-end">
+                            <h3 class="text-xl font-orbitron font-bold text-white group-hover:text-neonPurple transition-colors z-10">MLBB Hero Analyzer</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4 h-10">Analyze hero matchups, win rates, and optimal item builds for current meta.</p>
+                        <span class="w-full py-2.5 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-white font-semibold flex items-center justify-center gap-2 transition-all border border-gray-700 group-hover:border-neonPurple group-hover:shadow-[0_0_15px_rgba(176,38,255,0.3)]">
+                            Launch Tool <i class="fas fa-rocket text-sm"></i>
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Valorant Tool -->
+                <a href="valorant.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-red-500 transition-all duration-300 block">
+                    <div class="h-32 bg-gradient-to-r from-red-900 to-gray-900 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black opacity-40"></div>
+                        <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <div class="absolute inset-0 p-6 flex flex-col justify-end">
+                            <h3 class="text-xl font-orbitron font-bold text-white group-hover:text-red-400 transition-colors z-10">Valorant Lineups</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4 h-10">Interactive maps with pixel-perfect lineups for Viper, Sova, and Brimstone.</p>
+                        <span class="w-full py-2.5 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-white font-semibold flex items-center justify-center gap-2 transition-all border border-gray-700 group-hover:border-red-500 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                            Launch Tool <i class="fas fa-rocket text-sm"></i>
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Roblox Tool -->
+                <a href="roblox.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-blue-500 transition-all duration-300 block">
+                    <div class="h-32 bg-gradient-to-r from-blue-900 to-cyan-900 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black opacity-40"></div>
+                        <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="absolute inset-0 p-6 flex flex-col justify-end">
+                            <h3 class="text-xl font-orbitron font-bold text-white group-hover:text-neonBlue transition-colors z-10">Roblox Value Calc</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4 h-10">Real-time trading value calculator for Blox Fruits and Pet Simulator.</p>
+                        <span class="w-full py-2.5 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-white font-semibold flex items-center justify-center gap-2 transition-all border border-gray-700 group-hover:border-neonBlue group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                            Launch Tool <i class="fas fa-rocket text-sm"></i>
+                        </span>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Top-up Affiliate & Sponsored Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 mb-12">
+                <!-- Top-up Affiliate -->
+                <a href="#" class="lg:col-span-1 glass-panel rounded-2xl p-6 border border-neonBlue/30 hover:border-neonBlue transition-all group flex flex-col justify-center">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-neonBlue/10 rounded-xl flex items-center justify-center text-neonBlue">
+                            <i class="fas fa-gem text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white group-hover:text-neonBlue transition-colors">Top-up Diamond & VP</h4>
+                            <p class="text-xs text-gray-500 italic">Murah, Cepat & Legal.</p>
+                        </div>
+                    </div>
+                    <span class="w-full py-3 bg-neonBlue/10 text-neonBlue text-sm font-bold rounded-xl text-center group-hover:bg-neonBlue group-hover:text-black transition-all font-orbitron">
+                        CEK HARGA
+                    </span>
+                </a>
+
+                <!-- AdSense Slot (Sponsored Content) -->
+                <div class="lg:col-span-2 flex flex-col items-center justify-center">
+                    <div class="text-[10px] uppercase tracking-[2px] text-gray-600 mb-2 font-bold font-orbitron w-full">Sponsored Content</div>
+                    <div class="glass-panel w-full h-32 md:h-full rounded-2xl border border-gray-800 flex items-center justify-center overflow-hidden hover:border-gray-700 transition-colors">
+                        <div class="text-gray-600 font-rajdhani text-sm italic">Standard AdSense Banner (728x90)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div class="glass-panel rounded-2xl p-6 border border-gray-800 mb-10">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-orbitron font-bold text-white">Recent Activity</h2>
+                    <button class="text-sm text-neonBlue hover:text-white transition-colors">View All</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr class="text-gray-400 text-sm uppercase tracking-wider border-b border-gray-800">
+                                <th class="pb-3 px-4 font-semibold">Game</th>
+                                <th class="pb-3 px-4 font-semibold">Action</th>
+                                <th class="pb-3 px-4 font-semibold">Status</th>
+                                <th class="pb-3 px-4 font-semibold text-right">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300">
+                            <tr class="border-b border-gray-800/50 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-purple-900/50 text-purple-400 flex items-center justify-center">
+                                        <i class="fas fa-gamepad text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-white">Mobile Legends</span>
+                                </td>
+                                <td class="py-4 px-4">Checked Chou Build</td>
+                                <td class="py-4 px-4">
+                                    <span class="px-2 py-1 rounded text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">Success</span>
+                                </td>
+                                <td class="py-4 px-4 text-right text-gray-500 text-sm">2 mins ago</td>
+                            </tr>
+                            <tr class="border-b border-gray-800/50 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-red-900/50 text-red-400 flex items-center justify-center">
+                                        <i class="fas fa-crosshairs text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-white">Valorant</span>
+                                </td>
+                                <td class="py-4 px-4">Generated Sova Lineup</td>
+                                <td class="py-4 px-4">
+                                    <span class="px-2 py-1 rounded text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">Success</span>
+                                </td>
+                                <td class="py-4 px-4 text-right text-gray-500 text-sm">1 hour ago</td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-blue-900/50 text-blue-400 flex items-center justify-center">
+                                        <i class="fas fa-cubes text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-white">Roblox</span>
+                                </td>
+                                <td class="py-4 px-4">Trade Value Sync</td>
+                                <td class="py-4 px-4">
+                                    <span class="px-2 py-1 rounded text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">Pending</span>
+                                </td>
+                                <td class="py-4 px-4 text-right text-gray-500 text-sm">3 hours ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts for Mobile Sidebar Toggle -->
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Simple nav item activation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                // Only prevent default for placeholder links (#)
+                if (item.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                if (window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+
+    <!-- Floating Trakteer Donation Button -->
+    <a href="#" class="fixed bottom-6 right-6 z-50 group">
+        <div class="glass-panel flex items-center gap-3 px-5 py-3 rounded-2xl border border-neonPurple/50 shadow-neon-purple transition-all duration-300 hover:-translate-y-1 hover:border-neonPurple">
+            <div class="w-8 h-8 bg-neonPurple rounded-lg flex items-center justify-center text-white">
+                <i class="fas fa-coffee"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Support Us</span>
+                <span class="text-sm font-orbitron font-bold text-white group-hover:text-neonPurple transition-colors">Donasi Trakteer</span>
+            </div>
+        </div>
+    </a>
+</body>
+</html>

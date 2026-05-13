@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Trading Tools - VanguardAI.tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: '#0a0a0f',
+                        panel: 'rgba(16, 16, 28, 0.7)',
+                        neonPurple: '#b026ff',
+                        neonBlue: '#00f0ff',
+                        robloxBlue: '#00a2ff',
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3)',
+                        'neon-blue': '0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3)',
+                        'neon-roblox': '0 0 10px rgba(0, 162, 255, 0.5), 0 0 20px rgba(0, 162, 255, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(176, 38, 255, 0.1), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 162, 255, 0.15), transparent 25%);
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 35, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, #00a2ff, #00f0ff);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .nav-item:hover::before, .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(90deg, rgba(0,162,255,0.1) 0%, transparent 100%);
+            color: #fff;
+        }
+
+        .val-input {
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .val-input:focus {
+            border-color: #00a2ff;
+            box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+            outline: none;
+        }
+
+        .status-badge {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #00a2ff; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-rajdhani antialiased h-screen flex overflow-hidden">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden fixed top-0 w-full h-16 glass-panel z-50 flex items-center justify-between px-4 border-b border-gray-800">
+        <div class="text-2xl font-orbitron font-bold tracking-wider">
+            <span class="text-robloxBlue">VanguardAI</span><span class="text-neonBlue">.tools</span>
+        </div>
+        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="glass-panel w-64 h-full flex-shrink-0 flex flex-col fixed lg:static transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 top-0 left-0 pt-16 lg:pt-0">
+        <div class="h-20 flex items-center justify-center border-b border-gray-800 hidden lg:flex">
+            <a href="index.html" class="text-3xl font-orbitron font-bold tracking-wider cursor-pointer hover:scale-105 transition-transform">
+                <span class="text-robloxBlue">VanguardAI</span><span class="text-neonBlue">.tools</span>
+            </a>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 flex flex-col gap-2 px-4">
+            <div class="text-xs text-gray-500 uppercase tracking-widest mb-2 font-bold pl-2">Navigation</div>
+            
+            <a href="index.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-home text-lg group-hover:text-neonBlue transition-colors"></i>
+                <span class="font-semibold text-lg">Home</span>
+            </a>
+            
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-6 mb-2 font-bold pl-2">Game Tools</div>
+
+            <a href="mlbb.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-gamepad text-lg group-hover:text-neonPurple transition-colors"></i>
+                <span class="font-semibold text-lg">Mobile Legends</span>
+            </a>
+
+            <a href="valorant.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-crosshairs text-lg group-hover:text-red-400 transition-colors"></i>
+                <span class="font-semibold text-lg">Valorant Tools</span>
+            </a>
+
+            <a href="roblox.html" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+                <i class="fas fa-cubes text-lg group-hover:text-robloxBlue transition-colors"></i>
+                <span class="font-semibold text-lg">Roblox Tools</span>
+            </a>
+        </nav>
+
+        <!-- Coming Soon Section -->
+        <div class="px-6 py-4 mb-2">
+            <div class="glass-panel rounded-xl p-3 border-dashed border-gray-700">
+                <div class="text-[10px] text-robloxBlue font-bold uppercase tracking-wider mb-1">Coming Soon</div>
+                <div class="text-xs text-gray-500">Premium Features: Automated Trade Bots & Market Scanner.</div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-gray-800 mt-auto">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-neonPurple to-neonBlue p-[2px]">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Gamer" alt="User Avatar" class="w-full h-full rounded-full bg-dark">
+                </div>
+                <div>
+                    <div class="text-sm font-bold text-white">PlayerOne</div>
+                    <div class="text-xs text-neonBlue">Pro Member</div>
+                </div>
+                <button class="ml-auto text-gray-400 hover:text-white" aria-label="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto pt-16 lg:pt-0 relative">
+        <div class="p-6 lg:p-10 max-w-6xl mx-auto">
+            <header class="mb-10">
+                <h1 class="text-2xl md:text-4xl font-orbitron font-bold text-white mb-2">
+                    <span class="text-robloxBlue">ROBLOX</span> Trading Calculator
+                </h1>
+                <p class="text-gray-400 text-lg">Determine if your trade is a Win, Loss, or Fair in real-time.</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <!-- Your Items -->
+                <div class="glass-panel rounded-3xl p-8 border border-gray-800 shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-robloxBlue/20 flex items-center justify-center text-robloxBlue">
+                            <i class="fas fa-user text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-orbitron font-bold text-white">Your Items</h2>
+                    </div>
+                    <div id="yourItemsList" class="space-y-4">
+                        <div class="flex gap-4">
+                            <input type="number" placeholder="Item Value" class="val-input your-val flex-1 px-4 py-3 rounded-xl text-white font-bold">
+                        </div>
+                    </div>
+                    <button id="addYourItem" class="mt-4 text-sm text-robloxBlue hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Add another item
+                    </button>
+                    <div class="mt-8 pt-6 border-t border-gray-800">
+                        <div class="text-gray-500 text-xs font-bold uppercase mb-1">Total Value</div>
+                        <div id="yourTotal" class="text-4xl font-orbitron font-black text-white">0</div>
+                    </div>
+                </div>
+
+                <!-- Their Items -->
+                <div class="glass-panel rounded-3xl p-8 border border-gray-800 shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-neonPurple/20 flex items-center justify-center text-neonPurple">
+                            <i class="fas fa-users text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-orbitron font-bold text-white">Their Items</h2>
+                    </div>
+                    <div id="theirItemsList" class="space-y-4">
+                        <div class="flex gap-4">
+                            <input type="number" placeholder="Item Value" class="val-input their-val flex-1 px-4 py-3 rounded-xl text-white font-bold">
+                        </div>
+                    </div>
+                    <button id="addTheirItem" class="mt-4 text-sm text-neonPurple hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Add another item
+                    </button>
+                    <div class="mt-8 pt-6 border-t border-gray-800">
+                        <div class="text-gray-500 text-xs font-bold uppercase mb-1">Total Value</div>
+                        <div id="theirTotal" class="text-4xl font-orbitron font-black text-white">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Status -->
+            <div class="mt-10 flex flex-col items-center">
+                <div id="statusBadge" class="status-badge px-10 py-6 rounded-3xl glass-panel border border-gray-800 flex flex-col items-center text-center">
+                    <div class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-3">AI Trade Analysis</div>
+                    <div id="statusText" class="text-3xl font-orbitron font-black text-gray-600">Enter Values</div>
+                    <div id="statusDesc" class="mt-2 text-gray-500 text-sm max-w-md">Add item values to both sides to calculate the trade status.</div>
+                    
+                    <!-- Affiliate Top-up Banner -->
+                    <a href="#" class="mt-6 block w-full bg-robloxBlue/5 border border-robloxBlue/20 rounded-xl py-3 px-6 hover:bg-robloxBlue/10 transition-all group">
+                        <span class="text-xs font-bold text-gray-400 group-hover:text-robloxBlue transition-colors">Beli Robux Legal? <span class="text-white italic underline ml-2">Cek Partner Kami</span></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sponsored Content Area -->
+            <section class="mt-12 mb-10 flex flex-col items-center">
+                <div class="text-[10px] uppercase tracking-[2px] text-gray-500 mb-2 font-bold font-orbitron">Sponsored Content</div>
+                <div class="glass-panel rounded-lg border border-robloxBlue/30 shadow-[0_0_15px_rgba(0,162,255,0.1)] flex items-center justify-center overflow-hidden transition-all duration-300 hover:border-robloxBlue/60
+                    w-[320px] h-[50px] md:w-[728px] md:h-[90px]">
+                    <div class="text-gray-600 font-rajdhani text-sm italic">Standard Banner Area (728x90)</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        const yourItemsList = document.getElementById('yourItemsList');
+        const theirItemsList = document.getElementById('theirItemsList');
+        const addYourItem = document.getElementById('addYourItem');
+        const addTheirItem = document.getElementById('addTheirItem');
+        
+        const yourTotalDisplay = document.getElementById('yourTotal');
+        const theirTotalDisplay = document.getElementById('theirTotal');
+        
+        const statusBadge = document.getElementById('statusBadge');
+        const statusText = document.getElementById('statusText');
+        const statusDesc = document.getElementById('statusDesc');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        function createItemInput(side) {
+            const div = document.createElement('div');
+            div.className = 'flex gap-4';
+            div.innerHTML = `
+                <input type="number" placeholder="Item Value" class="val-input ${side}-val flex-1 px-4 py-3 rounded-xl text-white font-bold">
+                <button class="remove-btn text-gray-600 hover:text-red-500 transition-colors px-2"><i class="fas fa-times"></i></button>
+            `;
+            
+            div.querySelector('.remove-btn').addEventListener('click', () => {
+                div.remove();
+                calculate();
+            });
+            
+            div.querySelector('input').addEventListener('input', calculate);
+            return div;
+        }
+
+        addYourItem.addEventListener('click', () => {
+            yourItemsList.appendChild(createItemInput('your'));
+        });
+
+        addTheirItem.addEventListener('click', () => {
+            theirItemsList.appendChild(createItemInput('their'));
+        });
+
+        // Initial listeners
+        document.querySelectorAll('input').forEach(input => input.addEventListener('input', calculate));
+
+        function calculate() {
+            const yourVals = Array.from(document.querySelectorAll('.your-val')).map(i => parseFloat(i.value) || 0);
+            const theirVals = Array.from(document.querySelectorAll('.their-val')).map(i => parseFloat(i.value) || 0);
+            
+            const yourTotal = yourVals.reduce((a, b) => a + b, 0);
+            const theirTotal = theirVals.reduce((a, b) => a + b, 0);
+            
+            yourTotalDisplay.textContent = yourTotal.toLocaleString();
+            theirTotalDisplay.textContent = theirTotal.toLocaleString();
+            
+            if (yourTotal === 0 && theirTotal === 0) {
+                statusText.textContent = "Enter Values";
+                statusText.className = "text-3xl font-orbitron font-black text-gray-600";
+                statusBadge.style.borderColor = "rgba(31, 41, 55, 1)";
+                statusDesc.textContent = "Add item values to both sides to calculate the trade status.";
+                return;
+            }
+
+            const diff = theirTotal - yourTotal;
+            const percentage = (diff / yourTotal) * 100;
+
+            if (Math.abs(percentage) <= 5 || (yourTotal === theirTotal && yourTotal !== 0)) {
+                statusText.textContent = "FAIR TRADE";
+                statusText.className = "text-3xl font-orbitron font-black text-neonBlue";
+                statusBadge.style.borderColor = "#00f0ff";
+                statusDesc.textContent = "This trade is equal in value. Both parties are getting a fair deal.";
+            } else if (percentage > 5) {
+                statusText.textContent = "BIG WIN FOR YOU";
+                statusText.className = "text-3xl font-orbitron font-black text-green-400";
+                statusBadge.style.borderColor = "#4ade80";
+                statusDesc.textContent = `You are gaining ${(percentage).toFixed(1)}% more value. This is a great deal!`;
+            } else {
+                statusText.textContent = "LOSE FOR YOU";
+                statusText.className = "text-3xl font-orbitron font-black text-red-500";
+                statusBadge.style.borderColor = "#ef4444";
+                statusDesc.textContent = `You are losing ${Math.abs(percentage).toFixed(1)}% in value. Think twice before accepting.`;
+            }
+        }
+    </script>
+
+    <!-- Floating Trakteer Donation Button -->
+    <a href="#" class="fixed bottom-6 right-6 z-50 group">
+        <div class="glass-panel flex items-center gap-3 px-5 py-3 rounded-2xl border border-neonPurple/50 shadow-neon-purple transition-all duration-300 hover:-translate-y-1 hover:border-neonPurple">
+            <div class="w-8 h-8 bg-neonPurple rounded-lg flex items-center justify-center text-white">
+                <i class="fas fa-coffee"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Support Us</span>
+                <span class="text-sm font-orbitron font-bold text-white group-hover:text-neonPurple transition-colors">Donasi Trakteer</span>
+            </div>
+        </div>
+    </a>
+</body>
+</html>
