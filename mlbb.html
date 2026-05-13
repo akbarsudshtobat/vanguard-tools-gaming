@@ -258,14 +258,14 @@
 <body class="font-rajdhani antialiased h-screen flex overflow-hidden">
 
     <!-- Mobile Header -->
-    <div class="lg:hidden fixed top-0 w-full h-16 glass-panel z-[60] flex items-center justify-between px-4 border-b border-gray-800">
-        <a href="index.html" class="text-2xl font-orbitron font-bold tracking-wider">
+    <header class="lg:hidden fixed top-0 w-full h-16 glass-panel z-[60] flex items-center justify-between px-6 border-b border-gray-800">
+        <a href="index.html" class="text-xl font-orbitron font-bold tracking-wider flex items-center">
             <span class="text-neonPurple text-glow-purple">VanguardAI</span><span class="text-neonBlue text-glow-blue">.tools</span>
         </a>
-        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle menu">
+        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2" aria-label="Toggle Menu" aria-expanded="false" aria-controls="sidebar">
             <i class="fas fa-bars text-2xl"></i>
         </button>
-    </div>
+    </header>
 
     <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden lg:hidden" aria-hidden="true"></div>
@@ -342,7 +342,7 @@
                 <h1 class="text-2xl md:text-4xl font-orbitron font-bold text-white mb-3">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-neonPurple to-neonBlue">MLBB</span> Counter Picker
                 </h1>
-                <p class="text-gray-400 text-lg max-w-2xl">Enter the enemy hero name to discover the best counter picks, complete with win-rate analysis and strategic reasoning.</p>
+                <p class="text-gray-400 text-lg">Welcome back, <span id="welcome-user-name" class="text-white font-bold">Commander</span>. Discover the best counter picks for your match.</p>
             </header>
 
             <!-- Search Section -->
@@ -437,18 +437,62 @@
         </div>
     </main>
 
+    <!-- Custom Name Modal -->
+    <div id="name-modal-overlay">
+        <div class="modal-content p-8 rounded-3xl w-full max-w-md mx-4">
+            <h3 class="text-2xl font-orbitron font-bold text-white mb-2">Update Callsign</h3>
+            <p class="text-gray-400 mb-6 text-sm">Enter your new Vanguard operative name below.</p>
+            
+            <input type="text" id="name-input-field" maxlength="15" 
+                   class="modal-input w-full px-4 py-4 rounded-xl text-white text-lg font-rajdhani mb-6" 
+                   placeholder="Your Name...">
+            
+            <div class="flex gap-4">
+                <button id="cancel-name-btn" class="flex-1 py-3 rounded-xl border border-gray-700 text-gray-400 font-bold hover:bg-white/5 transition-all">
+                    CANCEL
+                </button>
+                <button id="save-name-btn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-neonPurple to-neonBlue text-white font-bold shadow-lg shadow-neonPurple/20 hover:shadow-neonPurple/40 transition-all font-orbitron">
+                    SAVE CHANGES
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="mlbb-data.js"></script>
     <script>
-    // Mobile sidebar toggle
+    // Mobile sidebar toggle with state management
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
+    
+    let isSidebarOpen = false;
+
     function toggleSidebar() {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
+        isSidebarOpen = !isSidebarOpen;
+        if (isSidebarOpen) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            mobileMenuBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        }
     }
-    mobileMenuBtn.addEventListener('click', toggleSidebar);
+
+    mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSidebar();
+    });
+
     overlay.addEventListener('click', toggleSidebar);
+
+    // Close sidebar on link click (mobile)
+    document.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth < 1024) toggleSidebar();
+        });
+    });
 
     // DOM elements
     const heroInput = document.getElementById('hero-input');
@@ -610,27 +654,6 @@
             if (e.target === nameModalOverlay) closeModal();
         });
     </script>
-
-    <!-- Custom Name Modal -->
-    <div id="name-modal-overlay">
-        <div class="modal-content p-8 rounded-3xl w-full max-w-md mx-4">
-            <h3 class="text-2xl font-orbitron font-bold text-white mb-2">Update Callsign</h3>
-            <p class="text-gray-400 mb-6 text-sm">Enter your new Vanguard operative name below.</p>
-            
-            <input type="text" id="name-input-field" maxlength="15" 
-                   class="modal-input w-full px-4 py-4 rounded-xl text-white text-lg font-rajdhani mb-6" 
-                   placeholder="Your Name...">
-            
-            <div class="flex gap-4">
-                <button id="cancel-name-btn" class="flex-1 py-3 rounded-xl border border-gray-700 text-gray-400 font-bold hover:bg-white/5 transition-all">
-                    CANCEL
-                </button>
-                <button id="save-name-btn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-neonPurple to-neonBlue text-white font-bold shadow-lg shadow-neonPurple/20 hover:shadow-neonPurple/40 transition-all font-orbitron">
-                    SAVE CHANGES
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Floating Trakteer Donation Button -->
     <a href="https://trakteer.id/akbarriyan" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-50 group">
