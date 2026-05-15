@@ -213,17 +213,17 @@
 
             <div class="text-xs text-gray-500 uppercase tracking-widest mt-6 mb-2 font-bold pl-2">Game Tools</div>
 
-            <a href="mlbb.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+            <a href="mlbb.html" class="nav-item sidebar-game flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group" data-search="mlbb mobile legends">
                 <i class="fas fa-gamepad text-lg group-hover:text-neonPurple transition-colors"></i>
                 <span class="font-semibold text-lg">Mobile Legends</span>
             </a>
 
-            <a href="valorant.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+            <a href="valorant.html" class="nav-item sidebar-game flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group" data-search="valorant tools">
                 <i class="fas fa-crosshairs text-lg group-hover:text-red-400 transition-colors"></i>
                 <span class="font-semibold text-lg">Valorant Tools</span>
             </a>
 
-            <a href="roblox.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group">
+            <a href="roblox.html" class="nav-item sidebar-game flex items-center gap-4 px-4 py-3 rounded-lg text-gray-300 group" data-search="roblox tools">
                 <i class="fas fa-cubes text-lg group-hover:text-blue-400 transition-colors"></i>
                 <span class="font-semibold text-lg">Roblox Tools</span>
             </a>
@@ -273,7 +273,7 @@
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                        <input type="text" placeholder="Search tools, games..." class="glass-panel pl-10 pr-4 py-2 rounded-full text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neonPurple w-full md:w-64 transition-all">
+                        <input type="text" id="search-input" placeholder="Search tools, games..." class="glass-panel pl-10 pr-4 py-2 rounded-full text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neonPurple w-full md:w-64 transition-all">
                     </div>
                     <button class="glass-panel p-2.5 rounded-full text-gray-300 hover:text-white hover:shadow-neon-blue transition-all relative">
                         <i class="fas fa-bell"></i>
@@ -355,10 +355,15 @@
 
             <!-- Featured Tools Section -->
             <h2 class="text-2xl font-orbitron font-bold text-white mb-6 border-l-4 border-neonPurple pl-3">Quick Access Tools</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div id="tools-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 relative">
                 
+                <!-- No Result Message -->
+                <div id="no-result-msg" class="hidden absolute inset-0 flex items-center justify-center col-span-1 md:col-span-3 h-32">
+                    <p class="text-gray-500 text-sm font-rajdhani italic"><i class="fas fa-search-minus mr-2"></i>Tool tidak ditemukan</p>
+                </div>
+
                 <!-- MLBB Tool -->
-                <a href="mlbb.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-neonPurple transition-all duration-300 block">
+                <a href="mlbb.html" class="tool-card glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-neonPurple transition-all duration-300 block" data-search="mlbb mobile legends hero analyzer">
                     <div class="h-32 bg-gradient-to-r from-indigo-900 to-purple-900 relative overflow-hidden">
                         <div class="absolute inset-0 bg-black opacity-40"></div>
                         <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
@@ -377,7 +382,7 @@
                 </a>
 
                 <!-- Valorant Tool -->
-                <a href="valorant.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-red-500 transition-all duration-300 block">
+                <a href="valorant.html" class="tool-card glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-red-500 transition-all duration-300 block" data-search="valorant lineups">
                     <div class="h-32 bg-gradient-to-r from-red-900 to-gray-900 relative overflow-hidden">
                         <div class="absolute inset-0 bg-black opacity-40"></div>
                         <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
@@ -396,7 +401,7 @@
                 </a>
 
                 <!-- Roblox Tool -->
-                <a href="roblox.html" class="glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-blue-500 transition-all duration-300 block">
+                <a href="roblox.html" class="tool-card glass-panel rounded-2xl overflow-hidden group cursor-pointer relative border border-gray-800 hover:border-blue-500 transition-all duration-300 block" data-search="roblox value calc trading">
                     <div class="h-32 bg-gradient-to-r from-blue-900 to-cyan-900 relative overflow-hidden">
                         <div class="absolute inset-0 bg-black opacity-40"></div>
                         <div class="absolute -right-4 -bottom-4 text-7xl text-white opacity-10 group-hover:scale-110 transition-transform duration-500">
@@ -643,6 +648,73 @@
                 }
             });
         });
+
+        // Real-Time Search Filter Logic
+        const searchInput = document.getElementById('search-input');
+        const toolCards = document.querySelectorAll('.tool-card');
+        const sidebarGames = document.querySelectorAll('.sidebar-game');
+        const noResultMsg = document.getElementById('no-result-msg');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                let hasVisibleCards = false;
+
+                // Filter Cards with Fade-out
+                toolCards.forEach(card => {
+                    const searchData = card.getAttribute('data-search') || '';
+                    const title = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+                    
+                    if (searchData.includes(searchTerm) || title.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        // Force reflow for transition
+                        void card.offsetWidth; 
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                        hasVisibleCards = true;
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            if (card.style.opacity === '0') {
+                                card.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+
+                // Show/Hide No Result Message
+                if (hasVisibleCards) {
+                    noResultMsg.classList.add('hidden');
+                } else {
+                    setTimeout(() => {
+                        const currentlyVisible = Array.from(toolCards).some(c => c.style.opacity === '1');
+                        if (!currentlyVisible && searchTerm !== '') {
+                            noResultMsg.classList.remove('hidden');
+                        }
+                    }, 300);
+                }
+
+                // Filter Sidebar Items
+                sidebarGames.forEach(item => {
+                    const searchData = item.getAttribute('data-search') || '';
+                    const title = item.querySelector('span') ? item.querySelector('span').textContent.toLowerCase() : '';
+                    
+                    if (searchData.includes(searchTerm) || title.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                        void item.offsetWidth;
+                        item.style.opacity = '1';
+                    } else {
+                        item.style.opacity = '0';
+                        setTimeout(() => {
+                            if (item.style.opacity === '0') {
+                                item.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+            });
+        }
     </script>
 
     <!-- Floating Trakteer Donation Button -->
